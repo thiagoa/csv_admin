@@ -17,8 +17,7 @@ defmodule Csv.RecordStream do
   defp to_stream(device) do
     device
     |> IO.stream(:line)
-    |> Stream.map(&String.trim/1)
-    |> Stream.map(&String.split(&1, ","))
+    |> NimbleCSV.RFC4180.parse_stream(headers: false)
   end
 
   defp extract_headers(stream) do
