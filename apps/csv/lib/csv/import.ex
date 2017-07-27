@@ -5,6 +5,8 @@ defmodule Csv.Import do
     {:ok, device} = File.open(input_path)
     {:ok, stream} = RecordStream.new(device, headers: headers, schema: schema)
 
-    stream |> Enum.each(&Csv.Repo.insert/1)
+    stream
+    |> Task.async_stream(Csv.Repo, :insert, [], max_concurrency: 10)
+    |> Enum.to_list
   end
 end
