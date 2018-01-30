@@ -1,11 +1,11 @@
 defmodule Csv.ImportTest do
   use ExUnit.Case
   alias Csv.Schemas.Site
-  alias Csv.Repo
+  alias Csv.Repo.InMemory, as: Repo
 
   test "imports records of a csv file" do
     Repo.start_link
-    options = [schema: Site, headers: ~w(name url)a, repo: Csv.Repo]
+    options = [schema: Site, headers: ~w(name url)a, repo: Repo]
 
     "test/fixtures/sites.csv" |> Csv.Import.call(options)
 
