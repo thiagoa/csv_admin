@@ -1,8 +1,13 @@
 defmodule Csv.Output do
   def open(path, headers, file_mod \\ File) do
-    {:ok, device} = file_mod.open(path, [:write])
-    headers = (headers ++ ["errors"]) |> Enum.join(",")
+    case file_mod.open(path, [:write]) do
+      {:ok, handle} ->
+        headers = headers ++ ["errors"] |> Enum.join(",")
+        IO.binwrite(handle, headers <> "\n")
+        {:ok, handle}
 
-    IO.binwrite(device, headers <> "\n")
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 end
