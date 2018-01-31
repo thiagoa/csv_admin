@@ -10,4 +10,8 @@ defmodule Csv.Output do
         {:error, reason}
     end
   end
+
+  def close(handle, file_mod \\ File) do
+    file_mod.close(handle)
+  end
 end

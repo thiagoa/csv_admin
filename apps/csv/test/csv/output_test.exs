@@ -3,6 +3,7 @@ defmodule Csv.OutputTest do
 
   defmodule FakeFile do
     def open(device, [:write]), do: {:ok, device}
+    def close(device), do: send self(), {:close, device}
   end
 
   def new_fake_path do
@@ -19,9 +20,11 @@ defmodule Csv.OutputTest do
     fake_path = new_fake_path()
     headers = ~w(name url)
 
-    Csv.Output.open(fake_path, headers, FakeFile)
+    {:ok, handle} = Csv.Output.open(fake_path, headers, FakeFile)
+    Csv.Output.close(handle, FakeFile)
 
     assert fake_file_contents(fake_path) == "name,url,errors\n"
+    assert_received {:close, ^handle}
   end
 
   defmodule BadFakeFile do
